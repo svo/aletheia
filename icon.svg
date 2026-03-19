@@ -2,18 +2,53 @@
   <!-- Background -->
   <circle cx="256" cy="256" r="256" fill="#0f172a"/>
 
-  <!-- Helmet (petasos) -->
-  <ellipse cx="256" cy="290" rx="120" ry="40" fill="#94a3b8"/>
-  <path d="M136 290 C136 225 196 160 256 160 C316 160 376 225 376 290" fill="#64748b"/>
-  <ellipse cx="256" cy="290" rx="120" ry="16" fill="#475569" opacity="0.5"/>
+  <!-- Radiating light rays (unconcealment) -->
+  <g opacity="0.15">
+    <line x1="256" y1="256" x2="256" y2="60" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="394" y2="116" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="452" y2="256" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="394" y2="396" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="256" y2="452" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="118" y2="396" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="60" y2="256" stroke="#e2e8f0" stroke-width="2"/>
+    <line x1="256" y1="256" x2="118" y2="116" stroke="#e2e8f0" stroke-width="2"/>
+  </g>
 
-  <!-- Left wing -->
-  <path d="M136 275 C105 252 55 240 10 250 C55 235 105 230 136 265Z" fill="#e2e8f0"/>
-  <path d="M136 262 C100 230 45 210 5 214 C45 204 100 210 136 250Z" fill="#cbd5e1"/>
-  <path d="M140 250 C110 210 60 182 15 178 C55 172 110 190 143 240Z" fill="#94a3b8"/>
+  <!-- Outer glow ring -->
+  <circle cx="256" cy="236" r="130" stroke="#334155" stroke-width="1.5" fill="none" opacity="0.5"/>
 
-  <!-- Right wing -->
-  <path d="M376 275 C407 252 457 240 502 250 C457 235 407 230 376 265Z" fill="#e2e8f0"/>
-  <path d="M376 262 C412 230 467 210 507 214 C467 204 412 210 376 250Z" fill="#cbd5e1"/>
-  <path d="M372 250 C402 210 452 182 497 178 C457 172 402 190 369 240Z" fill="#94a3b8"/>
+  <!-- Eye shape (perception / research) -->
+  <path d="M96 236 C96 236 176 136 256 136 C336 136 416 236 416 236 C416 236 336 336 256 336 C176 336 96 236 96 236Z" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+
+  <!-- Iris -->
+  <circle cx="256" cy="236" r="70" fill="#1e3a5f"/>
+  <circle cx="256" cy="236" r="70" fill="url(#irisGradient)"/>
+
+  <!-- Pupil -->
+  <circle cx="256" cy="236" r="30" fill="#0f172a"/>
+
+  <!-- Light reflection in eye -->
+  <circle cx="242" cy="220" r="10" fill="#e2e8f0" opacity="0.6"/>
+  <circle cx="268" cy="248" r="5" fill="#e2e8f0" opacity="0.3"/>
+
+  <!-- Pen nib below the eye (writing / blogging) -->
+  <g transform="translate(256, 410)">
+    <!-- Nib body -->
+    <path d="M0 -50 L-14 0 L0 20 L14 0 Z" fill="#94a3b8"/>
+    <!-- Nib split -->
+    <line x1="0" y1="-30" x2="0" y2="20" stroke="#0f172a" stroke-width="1.5"/>
+    <!-- Nib tip highlight -->
+    <path d="M-4 10 L0 20 L4 10" fill="#e2e8f0"/>
+  </g>
+
+  <!-- Greek alpha (α) faintly in the pupil — aletheia -->
+  <text x="256" y="244" text-anchor="middle" font-family="serif" font-size="28" fill="#334155" opacity="0.5">α</text>
+
+  <defs>
+    <radialGradient id="irisGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#1e40af" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#1e293b" stop-opacity="0.8"/>
+    </radialGradient>
+  </defs>
 </svg>
