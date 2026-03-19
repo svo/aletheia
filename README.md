@@ -44,6 +44,17 @@ docker run -d \
   -e ANTHROPIC_API_KEY="your-api-key" \
   -e BRAVE_API_KEY="your-brave-api-key" \
   -e TELEGRAM_BOT_TOKEN="your-telegram-bot-token" \
+  -e ALETHEIA_AUTHOR_NAME="SVO" \
+  -e ALETHEIA_AUTHOR_PICTURE="/assets/blog/authors/svo.png" \
+  -e ALETHEIA_BLOG_URL="https://www.qual.is/blog" \
+  -e ALETHEIA_TOPICS="AI and human perception, unconcealment in technology, structural asymmetries in software systems, philosophy of mind and machine cognition" \
+  -e ALETHEIA_PHILOSOPHICAL_LENS="Heideggerian phenomenology (unconcealment/aletheia, Dasein, ready-to-hand/present-at-hand), Levinas (ethics of the Other), perception theory (Hoffman), epistemology, instrumentalism" \
+  -e ALETHEIA_TONE="contemplative, intellectually serious but accessible, conversational authority — like a thoughtful essay, not an academic paper or a listicle" \
+  -e ALETHEIA_CRON_SCHEDULE="0 8 * * 1" \
+  -e ALETHEIA_TIMEZONE="Australia/Melbourne" \
+  -e ALETHEIA_WORD_COUNT="1500-3000" \
+  -e ALETHEIA_POST_TOPIC="think" \
+  -e ALETHEIA_LOCALE="en-AU" \
   -v /opt/aletheia/data:/root/.openclaw \
   -p 127.0.0.1:3000:3000 \
   svanosselaer/aletheia-service:latest
@@ -62,6 +73,17 @@ On first run, the entrypoint automatically configures OpenClaw via non-interacti
 | `TELEGRAM_ALLOW_FROM` | With `TELEGRAM_BOT_TOKEN` | Comma-separated Telegram user IDs to allow |
 | `SLACK_BOT_TOKEN` | No | Slack bot token (`xoxb-...`) from the Slack app settings |
 | `SLACK_APP_TOKEN` | With `SLACK_BOT_TOKEN` | Slack app-level token (`xapp-...`) with `connections:write` scope |
+| `ALETHEIA_AUTHOR_NAME` | Yes | Author name in post frontmatter |
+| `ALETHEIA_AUTHOR_PICTURE` | Yes | Author picture path in frontmatter |
+| `ALETHEIA_BLOG_URL` | Yes | Blog URL for style reference |
+| `ALETHEIA_TOPICS` | Yes | Comma-separated research focus areas |
+| `ALETHEIA_PHILOSOPHICAL_LENS` | Yes | Philosophical traditions to draw from |
+| `ALETHEIA_TONE` | Yes | Writing tone descriptors |
+| `ALETHEIA_CRON_SCHEDULE` | Yes | Cron expression for research runs |
+| `ALETHEIA_TIMEZONE` | Yes | Timezone for scheduling |
+| `ALETHEIA_WORD_COUNT` | Yes | Target word count range |
+| `ALETHEIA_POST_TOPIC` | Yes | Frontmatter `topic` field value |
+| `ALETHEIA_LOCALE` | Yes | Spelling and language conventions |
 
 ## Telegram Integration
 
@@ -131,38 +153,17 @@ If you have a Claude Pro or Max subscription, you can use it instead of an API k
    docker exec -it aletheia openclaw models auth order set --provider anthropic anthropic:manual anthropic:default
    ```
 
-## Example Initial Brief
+## Workspace Instructions
 
-On first contact, Aletheia will introduce itself and ask you to define its identity and role. Here's an example brief you can send via Telegram to get started:
+On startup, the entrypoint generates OpenClaw workspace files at `~/.openclaw/workspace/` using the `ALETHEIA_*` environment variables and sets `agent.skipBootstrap: true` so OpenClaw uses the pre-seeded files directly:
 
-> Hey Aletheia — welcome to the world.
->
-> Here's the deal: you're my research assistant. Your main job is scanning the world for interesting developments at the intersection of philosophy and technology, and drafting blog posts about potential software product ideas based on them.
->
-> To understand my interests and writing style, read my blog at https://www.qual.is/blog — pay attention to the recurring themes (unconcealment, Heidegger, the relationship between humans and AI, structural thinking) and the tone. Your drafts should feel like they belong alongside those posts.
->
-> **Schedule:** Set up a cron job to run every Monday at 08:00 AEST. Each week, research what's happening in the world — news, trends, releases, cultural shifts — and look for intersections with philosophy and technology that could inspire a software product idea. Write the draft as a `.md` file named with the slug (e.g., `the-signal-and-the-silence.md`) and send it to me as a file attachment via Telegram/Slack for review, along with a short summary of the angle you chose and why.
->
-> **Blog post format:** Use this frontmatter structure:
->
-> ```
-> ---
-> title: "Your Post Title Here"
-> excerpt: "A one-to-two sentence summary of the post's argument."
-> topic: "think"
-> date: "YYYY-MM-DD"
-> author:
->   name: SVO
->   picture: "/assets/blog/authors/svo.png"
-> ---
->
-> Post content in markdown...
-> ```
->
-> I'm SVO. Timezone is Australian Eastern (AEST/AEDT). I like things concise and I don't need you to narrate everything you're doing — just surface what matters.
->
-> Your vibe: calm, direct, and efficient. No fluff, no over-explaining. Casual but competent — like a trusted colleague, not a customer service rep.
->
-> Now go read your workspace files, set yourself up, and let's get to work.
+| File | Content |
+|---|---|
+| `IDENTITY.md` | Name, vibe, and emoji |
+| `SOUL.md` | Persona, tone, and boundaries |
+| `AGENTS.md` | Operating instructions — research focus, philosophical framework, argumentative structure, post format, and schedule |
+| `USER.md` | Author name, timezone, and locale |
 
-Aletheia will then update its own identity and workspace files based on your brief and start operating accordingly.
+These files are injected into the agent's context at the start of every session, so Aletheia has detailed craft guidance available immediately without needing to parse the blog on every run.
+
+All `ALETHEIA_*` variables are required — the container will fail on startup if any are missing. This makes the configuration explicit and avoids hidden assumptions about authorship, style, or scheduling.
