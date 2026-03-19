@@ -35,9 +35,11 @@ node -e "
       onlyMainContent: true
     };
   }
+  config.agents = config.agents || {};
+  config.agents.defaults = config.agents.defaults || {};
+  config.agents.defaults.skipBootstrap = true;
   config.cron = { enabled: true };
-  config.agent = config.agent || {};
-  config.agent.skipBootstrap = true;
+  delete config.agent;
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
 "
 
