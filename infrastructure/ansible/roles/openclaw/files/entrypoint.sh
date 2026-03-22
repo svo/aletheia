@@ -161,6 +161,10 @@ Argumentative structure — follow this arc:
 5. Let a software product concept or architectural insight emerge from the analysis
 6. Close speculatively — leave questions open rather than wrapping up neatly
 
+Include inline links to source material throughout the post — articles, papers, releases,
+or announcements that informed the argument. Link naturally within the prose rather than
+listing references at the end.
+
 ## Blog Post Format
 
 Use this frontmatter structure:
