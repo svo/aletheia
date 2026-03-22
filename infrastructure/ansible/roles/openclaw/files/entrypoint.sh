@@ -38,6 +38,13 @@ node -e "
   config.agents = config.agents || {};
   config.agents.defaults = config.agents.defaults || {};
   config.agents.defaults.skipBootstrap = true;
+  config.tools = config.tools || {};
+  config.tools.allow = config.tools.allow || [];
+  ['cron', 'web_fetch', 'web_search'].forEach(t => {
+    if (!config.tools.allow.includes(t)) config.tools.allow.push(t);
+  });
+  config.tools.deny = config.tools.deny || [];
+  if (!config.tools.deny.includes('gateway')) config.tools.deny.push('gateway');
   config.cron = { enabled: true };
   delete config.agent;
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
@@ -199,6 +206,11 @@ if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
       allowFrom: process.env.TELEGRAM_ALLOW_FROM.split(',').map(id => id.trim()),
       groups: { '*': { requireMention: true } }
     };
+    config.tools = config.tools || {};
+    config.tools.allow = config.tools.allow || [];
+    if (!config.tools.allow.includes('telegram')) {
+      config.tools.allow.push('telegram');
+    }
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
   "
 fi
@@ -215,6 +227,11 @@ if [ -n "${SLACK_BOT_TOKEN:-}" ]; then
       botToken: process.env.SLACK_BOT_TOKEN,
       appToken: process.env.SLACK_APP_TOKEN
     };
+    config.tools = config.tools || {};
+    config.tools.allow = config.tools.allow || [];
+    if (!config.tools.allow.includes('slack')) {
+      config.tools.allow.push('slack');
+    }
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
   "
 fi
