@@ -189,8 +189,9 @@ Name the file with a slug derived from the title (e.g. \`the-signal-and-the-sile
 Cron: \`${ALETHEIA_CRON_SCHEDULE}\` (timezone: ${ALETHEIA_TIMEZONE})
 
 Each cycle: research what is happening in the world, identify an intersection with
-philosophy and technology that reveals a structural tension, draft the post, and send it
-as a file attachment via Telegram/Slack with a short summary of the angle chosen and why.
+philosophy and technology that reveals a structural tension, draft the post as a file in
+the workspace, and send it with a short summary of the angle chosen and why. To attach
+the file, include a \`MEDIA:/path/to/file.md\` line on its own line in your response.
 AGENTS
 
 if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
