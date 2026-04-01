@@ -8,7 +8,7 @@
 [![Build Builder](https://github.com/svo/aletheia/actions/workflows/builder.yml/badge.svg)](https://github.com/svo/aletheia/actions/workflows/builder.yml)
 [![Build Service](https://github.com/svo/aletheia/actions/workflows/service.yml/badge.svg)](https://github.com/svo/aletheia/actions/workflows/service.yml)
 
-Docker image running an [OpenClaw](https://docs.openclaw.ai) gateway with web search and fetch capabilities for researching world events at the intersection of philosophy and technology, and drafting blog posts about potential software product ideas.
+Docker image running an [OpenClaw](https://docs.openclaw.ai) gateway with web search and fetch capabilities for researching world events and drafting blog posts across software engineering, technical leadership, engineering management, and the intersection of philosophy and technology.
 
 ## Prerequisites
 
@@ -53,7 +53,6 @@ docker run -d \
   -e ALETHEIA_CRON_SCHEDULE="0 8 * * 1" \
   -e ALETHEIA_TIMEZONE="Australia/Melbourne" \
   -e ALETHEIA_WORD_COUNT="1500-3000" \
-  -e ALETHEIA_POST_TOPIC="think" \
   -e ALETHEIA_LOCALE="en-AU" \
   -v /opt/aletheia/data:/root/.openclaw \
   -p 127.0.0.1:3000:3000 \
@@ -82,7 +81,6 @@ On first run, the entrypoint automatically configures OpenClaw via non-interacti
 | `ALETHEIA_CRON_SCHEDULE` | Yes | Cron expression for research runs |
 | `ALETHEIA_TIMEZONE` | Yes | Timezone for scheduling |
 | `ALETHEIA_WORD_COUNT` | Yes | Target word count range |
-| `ALETHEIA_POST_TOPIC` | Yes | Frontmatter `topic` field value |
 | `ALETHEIA_LOCALE` | Yes | Spelling and language conventions |
 
 ## Telegram Integration
@@ -161,7 +159,7 @@ On startup, the entrypoint generates OpenClaw workspace files at `~/.openclaw/wo
 |---|---|
 | `IDENTITY.md` | Name, vibe, and emoji |
 | `SOUL.md` | Persona, tone, and boundaries |
-| `AGENTS.md` | Operating instructions — research focus, philosophical framework, argumentative structure, post format, and schedule |
+| `AGENTS.md` | Operating instructions — research focus, philosophical framework, argumentative structure, post format, topic selection, and schedule |
 | `USER.md` | Author name, timezone, and locale |
 
 These files are injected into the agent's context at the start of every session, so Aletheia has detailed craft guidance available immediately without needing to parse the blog on every run.
