@@ -141,6 +141,7 @@ ${ALETHEIA_TONE}
 - Academic paper tone (no abstracts, no literature reviews)
 - Starting with philosophy — arrive at it through the concrete
 - Imposing a product idea — let insights emerge from the analysis, not the other way around
+- Em dashes — use commas, colons, parentheses, or separate sentences instead
 SOUL
 
 cat > "$HOME/.openclaw/workspace/AGENTS.md" <<AGENTS
