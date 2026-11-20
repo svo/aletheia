@@ -169,6 +169,14 @@ These files are injected into the agent's context at the start of every session,
 
 All `ALETHEIA_*` variables are required — the container will fail on startup if any are missing. This makes the configuration explicit and avoids hidden assumptions about authorship, style, or scheduling.
 
+### Previous posts
+
+Aletheia keeps a record of every post it drafts in `~/.openclaw/workspace/POSTS.md`, one entry per post: date, title, topic, file, the angle it argues, and the sources it is built on. Before drafting, it reads every entry and the titles and excerpts of the posts published on `ALETHEIA_BLOG_URL`, and it does not write a post that has the same title, argues the same central claim, or opens on the same event as one of them. Each summary it sends ends with the previous post closest to the new one and how the two differ, so you can see the check was made.
+
+The record is a file rather than the messages Aletheia has sent because neither of those can be read back reliably. A Telegram bot cannot fetch its chat history, and OpenClaw prunes the session of a scheduled run after 24 hours by default (`cron.sessionRetention`).
+
+The entrypoint never writes `POSTS.md`; the agent does. On the first run that finds no `POSTS.md`, Aletheia builds it from the drafts already in the workspace. To let it return to a subject, delete that entry from the file on the host side of the volume, `/opt/aletheia/data/workspace/POSTS.md` with the `docker run` above.
+
 ## Models
 
 | Work | Model | Key |

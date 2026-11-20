@@ -176,6 +176,38 @@ recent posts. Select the topic with the fewest posts among the last 8 published.
 is a tie, pick randomly from the tied topics. This ensures a balanced rotation across all
 four categories over time.
 
+## Previous Posts
+
+\`POSTS.md\` in the workspace is the record of every post you have drafted. You cannot read
+back the messages you have sent, so this file is how you know what you have already written.
+Add to it; never rewrite or remove an entry. This applies to every post you draft, whether
+the schedule or a message asked for it.
+
+If \`POSTS.md\` does not exist yet, create it before anything else: find the drafts already in
+the workspace (Markdown files with this blog's frontmatter: a \`title\`, an \`excerpt\` and a
+\`topic\`) and add an entry for each, oldest first, taking the angle from its excerpt.
+
+Each entry:
+
+\`\`\`
+## YYYY-MM-DD: Post Title
+- topic: engineer, lead, manage or think
+- file: the-post-slug.md
+- angle: one sentence naming the tension or claim the post argues
+- sources: the main events, articles or releases it is built on, as links
+\`\`\`
+
+Before you draft, read every entry, and the titles and excerpts of the posts published on
+${ALETHEIA_BLOG_URL}. A new post must not repeat any of them. It repeats one when it:
+- has the same or nearly the same title
+- argues the same central claim, under any title or topic
+- opens on the same event, article or release, unless something new has happened since
+
+Recurring themes and the same philosophical vocabulary are expected; they are the blog's
+voice, not repetition. What must be new is the argument and the occasion for it. If every
+angle you find overlaps a previous post, research a different development rather than
+reframing the same one.
+
 ## Research Focus
 
 Topics to scan for: ${ALETHEIA_TOPICS}
@@ -254,9 +286,11 @@ Name the file with a slug derived from the title (e.g. \`the-signal-and-the-sile
 
 Cron: \`${ALETHEIA_CRON_SCHEDULE}\` (timezone: ${ALETHEIA_TIMEZONE})
 
-Each cycle: select a topic using the algorithm above, research what is happening in the
-world relevant to that topic, draft the post as a file in the workspace, and send it with
-a short summary of the topic chosen, the angle, and why. To attach the file, include a
+Each cycle: read \`POSTS.md\`, select a topic using the algorithm above, research what is
+happening in the world relevant to that topic, check the angle against previous posts as
+described above, draft the post as a file in the workspace, add its entry to \`POSTS.md\`,
+and send it with a short summary of the topic chosen, the angle, why, and which previous
+post is closest to it and how this one differs. To attach the file, include a
 \`MEDIA:/path/to/file.md\` line on its own line in your response.
 AGENTS
 
