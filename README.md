@@ -34,6 +34,27 @@ Docker image running an [OpenClaw](https://docs.openclaw.ai) gateway with web se
 ./create-latest.sh service
 ```
 
+### Versions
+
+| What | Where | Currently |
+|---|---|---|
+| OpenClaw | `roles/openclaw/defaults/main.yml` → `openclaw_version` | `2026.9.37` |
+| Node.js (all three images) | `roles/node/defaults/main.yml` → `node_major` + `node_minimum_version` | `26`, at least `26.12.1` |
+
+OpenClaw is pinned, so a scheduled build installs the same release every time. To move it, change
+`openclaw_version`, and check the Node.js it wants first:
+
+```bash
+npm view openclaw@<version> engines
+```
+
+OpenClaw checks the Node.js version at startup and exits on anything else; 2026.9.37 wants
+`>=24.22.1 <25 || >=26.12.1`. `roles/node` installs one major for the service, builder and
+development images alike, from NodeSource's `node_<major>.x` repository, and the build fails if
+the Node.js it installed is older than `node_minimum_version` or outside that major. To move Node.js
+to another major, set `node_major` and `node_minimum_version`, and add the major being left to
+`node_retired_majors` so a machine provisioned again drops its repository.
+
 ## Running
 
 ```bash
@@ -147,3 +168,75 @@ On startup, the entrypoint generates OpenClaw workspace files at `~/.openclaw/wo
 These files are injected into the agent's context at the start of every session, so Aletheia has detailed craft guidance available immediately without needing to parse the blog on every run.
 
 All `ALETHEIA_*` variables are required — the container will fail on startup if any are missing. This makes the configuration explicit and avoids hidden assumptions about authorship, style, or scheduling.
+
+## Models
+
+| Work | Model | Key |
+|---|---|---|
+| Messages, and the scheduled research run | `anthropic/claude-opus-5-5` | `agents.defaults.model` |
+| Heartbeat | `anthropic/claude-haiku-5-5` | `agents.defaults.heartbeat.model` |
+| Compaction | `anthropic/claude-haiku-5-5` | `agents.defaults.compaction.model` |
+
+Each model has an entry under `agents.defaults.models` asking for an hour of prompt cache
+(`cacheRetention: long`). The entrypoint writes all of these keys on every start, so a model set
+inside the container with `openclaw config set` lasts until the next start. To change a model,
+edit `chatModel` or `utilityModel` in `entrypoint.sh`. A model id has to be one the pinned
+OpenClaw knows:
+
+```bash
+docker exec aletheia openclaw models list --all --provider anthropic
+```
+
+Prices per million tokens, input and output:
+
+| Model | Input | Output | Context window |
+|---|---|---|---|
+| Opus 5.5 | $4 | $20 | 1,000,000 |
+| Haiku 5.5, prompt of 100,000 tokens or fewer | $0.10 | $0.50 | 1,000,000 |
+| Haiku 5.5, longer prompt | $0.50 | $2.50 | |
+
+These replace Opus 4.6 ($5 and $25) and Haiku 4.5 ($1 and $5). A lower price per token is not
+the same as a cheaper run. Both 5.5 models have a newer tokenizer than the models they replace,
+which can count the same text as up to about a third more tokens, and both think on every
+request: thinking cannot be turned off on Opus 5.5, and OpenClaw runs it at medium effort. Either model can decline a request on safety grounds,
+which shows as a refusal rather than an answer.
+
+OpenClaw's `memory-core` plugin also schedules a memory consolidation job of its own, daily at
+03:00, which runs on the default model unless
+`plugins.entries.memory-core.config.dreaming.model` says otherwise.
+
+## Startup
+
+### Doctor runs on every start
+
+`openclaw doctor --fix --non-interactive` runs on every start, after the entrypoint writes the
+configuration and before the gateway starts. From 2026.9.37 the gateway no longer repairs state
+left by an older release when it starts: it checks the state, and exits if a store it needs is
+unsafe. Doctor is a maintenance pass over the state directory and the configuration, and on a
+volume that needs nothing it changes nothing. When it exits non-zero the container starts anyway
+and prints the last lines it wrote, with secrets redacted. Run
+`docker exec aletheia openclaw doctor --fix` to see its full report.
+
+### Brave, Firecrawl and Slack are plugins installed on first start
+
+OpenClaw no longer bundles the Brave and Firecrawl providers or the Slack channel; each is a
+separate npm package (`@openclaw/brave-plugin`, `@openclaw/firecrawl-plugin`, `@openclaw/slack`).
+Without its plugin, OpenClaw ignores the configuration for it: web search does not use Brave, web
+fetch does not use Firecrawl, and Slack does not connect. Doctor installs the plugin for every provider and channel
+the configuration names, at the same version as OpenClaw, into `~/.openclaw/npm` on the volume.
+That happens on the first start that configures it, which therefore needs to reach the npm
+registry.
+
+### The tool profile is left unset
+
+`tools.profile` chooses which tools the agent may call before `tools.deny` narrows it. The
+entrypoint deletes it on every start, which means no filtering of OpenClaw's core tools. Until
+2026.9.37, `full` meant the same, and the entrypoint used to write `full`. From 2026.9.37, `full`
+also turns on the optional tools of every enabled plugin, and onboarding writes `full` on a new
+volume. `tools.deny: ["gateway"]` still applies either way.
+
+### The Anthropic key is passed through `env.vars`
+
+The entrypoint copies `ANTHROPIC_API_KEY` into `env.vars.ANTHROPIC_API_KEY` on every start, so a
+new key reaches the gateway on the next restart. 2026.9.37 rejects the older location,
+`env.ANTHROPIC_API_KEY`, and the entrypoint removes it.
